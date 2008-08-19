@@ -1,0 +1,11 @@
+--- configure.in~	2008-05-05 00:26:37.000000000 +0200
++++ configure.in	2008-08-19 22:32:58.621843414 +0200
+@@ -35,8 +35,6 @@
+ AC_PROG_CC
+ AC_PROG_INSTALL
+ AC_PROG_MAKE_SET
+-AC_EXEEXT
+-AC_SUBST(AC_EXEEXT)
+ AC_C_BIGENDIAN
+ 
+ # Checks for libraries.
