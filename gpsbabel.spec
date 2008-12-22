@@ -1,12 +1,12 @@
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
-Version:	1.3.5
+Version:	1.3.6
 Release:	1
 License:	GPL
 Group:		Applications
 Source0:	http://www.gpsbabel.org/plan9.php?dl=%{name}-%{version}.tar.gz
-# Source0-md5:	1bea8cd22c24ee9c0cc769770c86a340
+# Source0-md5:	1571b31f8f06f722995449dbff01ca49
 Patch0:		%{name}-auto.patch
 URL:		http://www.gpsbabel.org/
 BuildRequires:	automake
