@@ -1,17 +1,20 @@
+# TODO
+# - Qt gui
+# - Use system shapelib instead of bundled partial shapelib
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
-Version:	1.3.6
-Release:	2
+Version:	1.4.2
+Release:	1
 License:	GPL
 Group:		Applications
-# Source0:	http://www.gpsbabel.org/plan9.php?dl=%{name}-%{version}.tar.gz
-Source0:	%{name}-%{version}.tar.gz
-# Source0-md5:	1571b31f8f06f722995449dbff01ca49
+# Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
+Source0:	http://pkgs.fedoraproject.org/repo/pkgs/gpsbabel/%{name}-%{version}.tar.gz/76ea9f7852be2e98aa18976c4697ca93/%{name}-%{version}.tar.gz
+# Source0-md5:	76ea9f7852be2e98aa18976c4697ca93
 Patch0:		%{name}-auto.patch
 URL:		http://www.gpsbabel.org/
-BuildRequires:	automake
 BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	expat-devel
 BuildRequires:	libusb-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -26,7 +29,7 @@ formatu na drugi.
 
 %prep
 %setup -q
-%patch0 -p0
+%patch0 -p1
 
 %build
 %{__aclocal}
@@ -46,5 +49,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS README* gpsbabel.html
+%doc AUTHORS README*
+#%doc gpsbabel.html
 %attr(755,root,root) %{_bindir}/gpsbabel
