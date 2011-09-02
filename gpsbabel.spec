@@ -18,12 +18,14 @@ Source0:	http://pkgs.fedoraproject.org/repo/pkgs/gpsbabel/%{name}-%{version}.tar
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Patch0:		%{name}-auto.patch
+Patch1:       use-system-shapelib.patch
 URL:		http://www.gpsbabel.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	expat-devel
 BuildRequires:	libusb-devel
 BuildRequires:	rpmbuild(macros) >= 1.600
+BuildRequires: shapelib-devel
 %if %{with qt4}
 BuildRequires:	QtCore-devel >= %{qtver}
 BuildRequires:	QtGui-devel >= %{qtver}
@@ -58,6 +60,10 @@ Qt GUI interface for GPSBabel
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+
+# Use system shapelib instead of bundled partial shapelib
+%{__rm} -rf shapelib
 
 %build
 %{__aclocal}
