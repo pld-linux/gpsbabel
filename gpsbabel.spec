@@ -1,5 +1,5 @@
 # TODO
-# - Use system shapelib instead of bundled partial shapelib
+# - fix as-needed fix needed
 #
 # Conditional build:
 %bcond_without	qt4		# build Qt4 GUI
@@ -9,7 +9,7 @@ Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
 Version:	1.4.2
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
@@ -18,14 +18,14 @@ Source0:	http://pkgs.fedoraproject.org/repo/pkgs/gpsbabel/%{name}-%{version}.tar
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Patch0:		%{name}-auto.patch
-Patch1:       use-system-shapelib.patch
+Patch1:		use-system-shapelib.patch
 URL:		http://www.gpsbabel.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	expat-devel
 BuildRequires:	libusb-devel
 BuildRequires:	rpmbuild(macros) >= 1.600
-BuildRequires: shapelib-devel
+BuildRequires:	shapelib-devel
 %if %{with qt4}
 BuildRequires:	QtCore-devel >= %{qtver}
 BuildRequires:	QtGui-devel >= %{qtver}
@@ -37,6 +37,9 @@ BuildRequires:	qt4-build >= %{qtver}
 BuildRequires:	qt4-qmake >= %{qtver}
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+# FIXME
+%define		filterout_ld	-Wl,--as-needed
 
 %define		translationdir	%{_datadir}/qt4/translations
 
