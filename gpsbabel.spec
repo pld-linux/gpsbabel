@@ -22,6 +22,7 @@ Source1:	%{name}.desktop
 Source2:	%{name}.png
 Patch0:		%{name}-auto.patch
 Patch1:		use-system-shapelib.patch
+Patch2:		gmapbase.patch
 URL:		http://www.gpsbabel.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -68,6 +69,7 @@ Qt GUI interface for GPSBabel
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Use system shapelib instead of bundled partial shapelib
 mv shapelib{,.bundled}
@@ -97,12 +99,11 @@ install -d $RPM_BUILD_ROOT%{_bindir}
 	DESTDIR=$RPM_BUILD_ROOT
 
 %if %{with qt4}
-%{__make} -C gui install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-install -d $RPM_BUILD_ROOT{%{_bindir},%{translationdir}}
+install -d $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_datadir}/%{name},%{translationdir}}
 install -p gui/objects/gpsbabelfe-bin $RPM_BUILD_ROOT%{_bindir}
-install -p gui/gpsbabel*_*.qm         $RPM_BUILD_ROOT%{translationdir}
+install -p gui/gpsbabel*_*.qm $RPM_BUILD_ROOT%{translationdir}
+cp -p gui/gmapbase.html $RPM_BUILD_ROOT%{_datadir}/%{name}
 
 desktop-file-install \
 	--dir $RPM_BUILD_ROOT%{_desktopdir} \
@@ -145,6 +146,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/gpsbabelfe-bin
 %{_desktopdir}/*.desktop
 %{_iconsdir}/hicolor/*/apps/*.png
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/gmapbase.html
 # XXX move to qt.spec?
 %dir %{translationdir}
 %endif
