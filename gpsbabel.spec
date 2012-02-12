@@ -8,13 +8,16 @@
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
-Version:	1.4.2
-Release:	3
+Version:	1.4.3
+Release:	1
 License:	GPL
 Group:		Applications
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
-Source0:	http://pkgs.fedoraproject.org/repo/pkgs/gpsbabel/%{name}-%{version}.tar.gz/76ea9f7852be2e98aa18976c4697ca93/gpsbabel-%{version}.tar.gz
-# Source0-md5:	76ea9f7852be2e98aa18976c4697ca93
+# token=$(curl -s http://www.gpsbabel.org/download.html | sed -rne 's/.*token.*value="([^"]+)".*/\1/p' | head -n1)
+# version=1.4.3
+# curl -F "token=$token" -F "dl=gpsbabel-$version.tar.gz" http://www.gpsbabel.org/plan9.php -o gpsbabel-$version.tar.gz
+Source0:	%{name}-%{version}.tar.gz
+# Source0-md5:	916f7e124f6df911a24e1ea323e9c529
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Patch0:		%{name}-auto.patch
@@ -67,7 +70,7 @@ Qt GUI interface for GPSBabel
 %patch1 -p1
 
 # Use system shapelib instead of bundled partial shapelib
-%{__rm} -rf shapelib
+mv shapelib{,.bundled}
 
 %build
 %{__aclocal}
