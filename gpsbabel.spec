@@ -1,17 +1,15 @@
-# TODO
-# - fix as-needed fix needed
 #
 # Conditional build:
 %bcond_without	qt4		# build Qt4 GUI
-
+#
 %define		qtver		4.7.1
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
 Version:	1.4.3
 Release:	1
-License:	GPL
-Group:		Applications
+License:	GPL v2+
+Group:		Applications/Engineering
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
 # token=$(curl -s http://www.gpsbabel.org/download.html | sed -rne 's/.*token.*value="([^"]+)".*/\1/p' | head -n1)
 # version=1.4.3
@@ -23,13 +21,17 @@ Source2:	%{name}.png
 Patch0:		%{name}-auto.patch
 Patch1:		use-system-shapelib.patch
 Patch2:		gmapbase.patch
+Patch3:		%{name}-link.patch
 URL:		http://www.gpsbabel.org/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
+BuildRequires:	docbook-style-xsl
 BuildRequires:	expat-devel
-BuildRequires:	libusb-devel
+BuildRequires:	libusb-compat-devel >= 0.1
+BuildRequires:	libxslt-progs
 BuildRequires:	rpmbuild(macros) >= 1.600
 BuildRequires:	shapelib-devel
+BuildRequires:	zlib-devel
 %if %{with qt4}
 BuildRequires:	QtCore-devel >= %{qtver}
 BuildRequires:	QtGui-devel >= %{qtver}
@@ -43,9 +45,6 @@ BuildRequires:	qt4-qmake >= %{qtver}
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-# FIXME
-%define		filterout_ld	-Wl,--as-needed
-
 %define		translationdir	%{_datadir}/qt4/translations
 
 %description
@@ -58,18 +57,22 @@ formatu na drugi.
 
 %package gui
 Summary:	Qt GUI interface for GPSBabel
-License:	GPL v2+
+Summary(pl.UTF-8):	Graficzny interfejs Qt do programu GPSBabel
 Group:		Applications/Engineering
 Requires:	%{name} = %{version}-%{release}
 
 %description gui
-Qt GUI interface for GPSBabel
+Qt GUI interface for GPSBabel.
+
+%description gui -l pl.UTF-8
+Graficzny interfejs Qt do programu GPSBabel.
 
 %prep
 %setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # Use system shapelib instead of bundled partial shapelib
 mv shapelib{,.bundled}
@@ -135,8 +138,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS README*
-#%doc gpsbabel.html
+%doc AUTHORS README* gpsbabel.html
 %attr(755,root,root) %{_bindir}/gpsbabel
 
 %if %{with qt4}
@@ -144,8 +146,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc gui/{AUTHORS,README*,TODO}
 %attr(755,root,root) %{_bindir}/gpsbabelfe-bin
-%{_desktopdir}/*.desktop
-%{_iconsdir}/hicolor/*/apps/*.png
+%{_desktopdir}/gpsbabel.desktop
+%{_iconsdir}/hicolor/*/apps/gpsbabel.png
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/gmapbase.html
 # XXX move to qt.spec?
