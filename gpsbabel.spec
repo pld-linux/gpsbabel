@@ -11,8 +11,8 @@ Release:	1
 License:	GPL v2+
 Group:		Applications/Engineering
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
-# token=$(curl -s http://www.gpsbabel.org/download.html | sed -rne 's/.*token.*value="([^"]+)".*/\1/p' | head -n1)
-# version=1.4.3
+# version=1.4.4
+# token=$(curl -s http://www.gpsbabel.org/download.html | sed -rne 's/.*gpsbabel-'$version'\.tar\.gz.*token.*value="([^"]+)".*/\1/p' | head -n1)
 # curl -F "token=$token" -F "dl=gpsbabel-$version.tar.gz" http://www.gpsbabel.org/plan9.php -o gpsbabel-$version.tar.gz
 Source0:	%{name}-%{version}.tar.gz
 # Source0-md5:	6c4c8f0cb9fcf9f8302585148878f174
