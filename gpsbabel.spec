@@ -26,7 +26,7 @@ URL:		http://www.gpsbabel.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
 BuildRequires:	docbook-style-xsl
-BuildRequires:	expat-devel
+BuildRequires:	expat-devel >= 1.95
 BuildRequires:	libusb-compat-devel >= 0.1
 BuildRequires:	libxslt-progs
 BuildRequires:	rpmbuild(macros) >= 1.600
