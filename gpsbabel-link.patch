@@ -1,11 +1,11 @@
---- gpsbabel-1.4.3/Makefile.in.orig	2012-02-19 14:15:39.111366297 +0100
-+++ gpsbabel-1.4.3/Makefile.in	2012-02-19 14:28:38.421392392 +0100
-@@ -98,7 +98,7 @@
-           uuid.o formspec.o xmltag.o cet.o cet_util.o fatal.o rgbcolors.o \
+--- gpsbabel-1.5.1/Makefile.in.orig	2014-11-23 10:53:00.579901305 +0100
++++ gpsbabel-1.5.1/Makefile.in	2014-11-23 10:54:42.482400863 +0100
+@@ -111,7 +111,7 @@
+           formspec.o xmltag.o cet.o cet_util.o fatal.o rgbcolors.o \
  	  inifile.o garmin_fs.o gbsleep.o units.o @GBSER@ gbser.o \
- 	  gbfile.o parse.o avltree.o session.o \
+ 	  gbfile.o parse.o session.o src/core/xmlstreamwriter.o \
 -	$(PALM_DB) $(GARMIN) $(JEEPS) $(SHAPE) @ZLIB@ $(FMTS) $(FILTERS)
 +	$(PALM_DB) $(GARMIN) $(JEEPS) $(FMTS) $(FILTERS) $(SHAPE) @ZLIB@
  OBJS = main.o globals.o $(LIBOBJS) @FILEINFO@
  
- .c.o:
+ DEPFILES = $(OBJS:.o=.d)

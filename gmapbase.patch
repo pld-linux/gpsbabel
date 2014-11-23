@@ -1,5 +1,5 @@
---- gpsbabel-1.4.3/gui/map.cpp~	2009-08-28 20:08:55.000000000 +0300
-+++ gpsbabel-1.4.3/gui/map.cpp	2012-02-12 23:10:09.498423153 +0200
+--- gpsbabel-1.5.1/gui/map.cc.orig	2013-12-31 02:01:14.000000000 +0100
++++ gpsbabel-1.5.1/gui/map.cc	2014-11-23 10:52:00.923720369 +0100
 @@ -60,7 +60,7 @@
    connect(this,SIGNAL(loadFinished(bool)),
  	  this,SLOT(loadFinishedX(bool)));
