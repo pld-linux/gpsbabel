@@ -1,0 +1,57 @@
+--- gpsbabel-gpsbabel_1_5_4/tef_xml.cc.orig	2017-01-02 06:05:19.000000000 +0100
++++ gpsbabel-gpsbabel_1_5_4/tef_xml.cc	2018-11-01 12:04:19.187883183 +0100
+@@ -72,11 +72,11 @@
+   bool valid = false;
+ 
+   foreach(QXmlStreamAttribute attr, *attrv) {
+-    if (attr.name().compare("Comment", Qt::CaseInsensitive) == 0) {
+-      if (attr.value().compare("TourExchangeFormat", Qt::CaseInsensitive) == 0) {
++    if (attr.name().compare(QByteArrayLiteral("Comment"), Qt::CaseInsensitive) == 0) {
++      if (attr.value().compare(QByteArrayLiteral("TourExchangeFormat"), Qt::CaseInsensitive) == 0) {
+         valid = true;
+       }
+-    } else if (attr.name().compare("Version", Qt::CaseInsensitive) == 0) {
++    } else if (attr.name().compare(QByteArrayLiteral("Version"), Qt::CaseInsensitive) == 0) {
+       version = attr.value().toString().toDouble();
+     }
+   }
+@@ -95,9 +95,9 @@
+ {
+   route = route_head_alloc();
+   foreach(QXmlStreamAttribute attr, *attrv) {
+-    if (attr.name().compare("Name", Qt::CaseInsensitive) == 0) {
++    if (attr.name().compare(QByteArrayLiteral("Name"), Qt::CaseInsensitive) == 0) {
+       route->rte_name = attr.value().toString().trimmed();
+-    } else if (attr.name().compare("Software", Qt::CaseInsensitive) == 0) {
++    } else if (attr.name().compare(QByteArrayLiteral("Software"), Qt::CaseInsensitive) == 0) {
+       route->rte_desc = attr.value().toString().trimmed();
+     }
+   }
+@@ -248,20 +248,20 @@
+     QString attrstr = attr.value().toString();
+     QByteArray attrtext = attrstr.toUtf8();
+ 
+-    if (attr.name().compare("SegDescription", Qt::CaseInsensitive) == 0) {
++    if (attr.name().compare(QByteArrayLiteral("SegDescription"), Qt::CaseInsensitive) == 0) {
+       wpt_tmp->shortname = attrstr.trimmed();
+-    } else if (attr.name().compare("PointDescription", Qt::CaseInsensitive) == 0) {
++    } else if (attr.name().compare(QByteArrayLiteral("PointDescription"), Qt::CaseInsensitive) == 0) {
+       wpt_tmp->description = attrstr.trimmed();
+-    } else if (attr.name().compare("ViaStation", Qt::CaseInsensitive) == 0 &&
+-               attr.value().compare("true", Qt::CaseInsensitive) == 0) {
++    } else if (attr.name().compare(QByteArrayLiteral("ViaStation"), Qt::CaseInsensitive) == 0 &&
++               attr.value().compare(QByteArrayLiteral("true"), Qt::CaseInsensitive) == 0) {
+       wpt_tmp->wpt_flags.fmt_use = 1;  /* only a flag */
+ 
+       /* new in TEF V2 */
+-    } else if (attr.name().compare("Instruction", Qt::CaseInsensitive) == 0) {
++    } else if (attr.name().compare(QByteArrayLiteral("Instruction"), Qt::CaseInsensitive) == 0) {
+       wpt_tmp->description = attrstr.trimmed();
+-    } else if (attr.name().compare("Altitude", Qt::CaseInsensitive) == 0) {
++    } else if (attr.name().compare(QByteArrayLiteral("Altitude"), Qt::CaseInsensitive) == 0) {
+       wpt_tmp->altitude = attrstr.toDouble();
+-    } else if (attr.name().compare("TimeStamp", Qt::CaseInsensitive) == 0) {
++    } else if (attr.name().compare(QByteArrayLiteral("TimeStamp"), Qt::CaseInsensitive) == 0) {
+       /* nothing for the moment */
+     }
+   }

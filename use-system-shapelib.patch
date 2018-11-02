@@ -11,38 +11,38 @@ Use system shapelib - not suitable for upstream in this form.
  AC_CONFIG_FILES([gui/makelinuxdist.sh], [chmod +x gui/makelinuxdist.sh])
  AC_OUTPUT
  
---- gpsbabel-1.5.1/Makefile.in.orig	2014-11-23 10:08:03.677290002 +0100
-+++ gpsbabel-1.5.1/Makefile.in	2014-11-23 10:40:46.535655647 +0100
-@@ -99,7 +99,7 @@
+--- gpsbabel-1.5.4/Makefile.in.orig	2018-11-01 11:23:12.597708780 +0100
++++ gpsbabel-1.5.4/Makefile.in	2018-11-01 11:26:35.878954083 +0100
+@@ -100,7 +100,7 @@
  # Extra modules in Jeeps that we don't use
  # 	jeeps/gpsfmt.o jeeps/gpsinput.o jeeps/gpsproj.o
  
 -SHAPE=shapelib/shpopen.o shapelib/dbfopen.o shapelib/safileio.o
 +SHAPE=-lshp
  
- ZLIB=zlib/adler32.o zlib/compress.o zlib/crc32.o zlib/deflate.o zlib/inffast.o \
- 	zlib/inflate.o zlib/infback.o zlib/inftrees.o zlib/trees.o \
-@@ -906,11 +906,7 @@
+ MINIZIP=zlib/contrib/minizip/zip.o \
+ 	zlib/contrib/minizip/ioapi.o
+@@ -894,11 +894,7 @@
  session.o: session.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
-   gbfile.h cet.h cet_util.h inifile.h session.h src/core/datetime.h
+   gbfile.h cet.h inifile.h session.h src/core/datetime.h
  shape.o: shape.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
--  gbfile.h cet.h cet_util.h inifile.h session.h src/core/datetime.h \
+-  gbfile.h cet.h inifile.h session.h src/core/datetime.h \
 -  shapelib/shapefil.h
 -shapelib/dbfopen.o: shapelib/dbfopen.c shapelib/shapefil.h
 -shapelib/safileio.o: shapelib/safileio.c shapelib/shapefil.h
 -shapelib/shpopen.o: shapelib/shpopen.c shapelib/shapefil.h
-+  gbfile.h cet.h cet_util.h inifile.h session.h src/core/datetime.h 
++  gbfile.h cet.h inifile.h session.h src/core/datetime.h
  skyforce.o: skyforce.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
-   gbfile.h cet.h cet_util.h inifile.h session.h src/core/datetime.h
+   gbfile.h cet.h inifile.h session.h src/core/datetime.h
  skytraq.o: skytraq.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
---- gpsbabel-1.5.1/shape.cc.orig	2014-04-10 04:43:08.000000000 +0200
-+++ gpsbabel-1.5.1/shape.cc	2014-11-23 10:42:23.854932957 +0100
+--- gpsbabel-1.5.4/shape.cc.orig	2018-11-01 11:23:12.597708780 +0100
++++ gpsbabel-1.5.4/shape.cc	2018-11-01 11:29:59.950436006 +0100
 @@ -20,7 +20,7 @@
  
   */
  #include "defs.h"
 -#include "shapelib/shapefil.h"
 +#include <libshp/shapefil.h>
+ #include <stdlib.h>
  
  #if SHAPELIB_ENABLED
- static SHPHandle ihandle;

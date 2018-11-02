@@ -1,51 +1,54 @@
 #
 # Conditional build:
-%bcond_without	qt4		# build Qt4 GUI
+%bcond_without	qt5		# build Qt5 GUI
 #
-%define		qtver		4.7.1
+%define		qtver		5.11.1
+%define         fver    %(echo %{version} | tr . _)
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
-Version:	1.5.1
+Version:	1.5.4
 Release:	1
 License:	GPL v2+
 Group:		Applications/Engineering
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
-# version=1.4.4
+# version=1.5.4
 # token=$(curl -s http://www.gpsbabel.org/download.html | sed -rne 's/.*gpsbabel-'$version'\.tar\.gz.*token.*value="([^"]+)".*/\1/p' | head -n1)
 # curl -F "token=$token" -F "dl=gpsbabel-$version.tar.gz" http://www.gpsbabel.org/plan9.php -o gpsbabel-$version.tar.gz
-Source0:	%{name}-%{version}.tar.gz
-# Source0-md5:	0016c6313b3a5b97afd8d1d8f23abbe1
+Source0:	https://github.com/gpsbabel/gpsbabel/archive/%{name}_%{fver}.tar.gz
+# Source0-md5:	0f2d422dbae82f939564cf8305a4654c
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Patch0:		%{name}-auto.patch
 Patch1:		use-system-shapelib.patch
 Patch2:		gmapbase.patch
 Patch3:		%{name}-link.patch
+Patch4:		qt.patch
+Patch5:		privacy.patch
 URL:		http://www.gpsbabel.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
 BuildRequires:	docbook-style-xsl
 BuildRequires:	expat-devel >= 1.95
-BuildRequires:	libusb-compat-devel >= 0.1
+#BuildRequires:	libusb-compat-devel >= 0.1
 BuildRequires:	libxslt-progs
 BuildRequires:	rpmbuild(macros) >= 1.600
 BuildRequires:	shapelib-devel
 BuildRequires:	zlib-devel
-%if %{with qt4}
-BuildRequires:	QtCore-devel >= %{qtver}
-BuildRequires:	QtGui-devel >= %{qtver}
-BuildRequires:	QtNetwork-devel >= %{qtver}
-BuildRequires:	QtWebKit-devel >= %{qtver}
-BuildRequires:	QtXml-devel >= %{qtver}
+BuildRequires:	Qt5Core-devel >= %{qtver}
+%if %{with qt5}
+BuildRequires:	Qt5Gui-devel >= %{qtver}
+BuildRequires:	Qt5Network-devel >= %{qtver}
+BuildRequires:	Qt5WebEngine-devel >= %{qtver}
+BuildRequires:	Qt5Xml-devel >= %{qtver}
 BuildRequires:	desktop-file-utils
-BuildRequires:	qt4-build >= %{qtver}
-BuildRequires:	qt4-linguist >= %{qtver}
-BuildRequires:	qt4-qmake >= %{qtver}
+BuildRequires:	qt5-build >= %{qtver}
+BuildRequires:	qt5-linguist >= %{qtver}
+BuildRequires:	qt5-qmake >= %{qtver}
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		translationdir	%{_datadir}/qt4/translations
+%define		translationdir	%{_datadir}/qt5/translations
 
 %description
 Converts GPS waypoint, route and track data from one format type to
@@ -68,11 +71,13 @@ Qt GUI interface for GPSBabel.
 Graficzny interfejs Qt do programu GPSBabel.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{name}_%{fver}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 # Use system shapelib instead of bundled partial shapelib
 mv shapelib{,.bundled}
@@ -88,10 +93,10 @@ mv shapelib{,.bundled}
 %{__perl} xmldoc/makedoc
 %{__make} gpsbabel.html
 
-%if %{with qt4}
+%if %{with qt5}
 cd gui
-qmake-qt4
-lrelease-qt4 *.ts
+qmake-qt5
+lrelease-qt5 *.ts
 %{__make}
 %endif
 
@@ -101,7 +106,7 @@ install -d $RPM_BUILD_ROOT%{_bindir}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-%if %{with qt4}
+%if %{with qt5}
 install -d $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_datadir}/%{name},%{translationdir}}
 install -p gui/objects/gpsbabelfe-bin $RPM_BUILD_ROOT%{_bindir}
@@ -141,7 +146,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS README* gpsbabel.html
 %attr(755,root,root) %{_bindir}/gpsbabel
 
-%if %{with qt4}
+%if %{with qt5}
 %files gui -f %{name}.lang
 %defattr(644,root,root,755)
 %doc gui/{AUTHORS,README*,TODO}
@@ -150,6 +155,4 @@ rm -rf $RPM_BUILD_ROOT
 %{_iconsdir}/hicolor/*/apps/gpsbabel.png
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/gmapbase.html
-# XXX move to qt.spec?
-%dir %{translationdir}
 %endif
