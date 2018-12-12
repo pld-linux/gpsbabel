@@ -4,11 +4,18 @@
 #
 %define		qtver		5.11.1
 %define         fver    %(echo %{version} | tr . _)
+
+# disable qt5 on x32 until qt5-qtwebengine builds
+# (python segfaults as of 20181212)
+%ifarch x32
+%undefine with_qt5
+%endif
+
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
 Version:	1.5.4
-Release:	2
+Release:	3
 License:	GPL v2+
 Group:		Applications/Engineering
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
