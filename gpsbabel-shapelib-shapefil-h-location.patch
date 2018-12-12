@@ -1,0 +1,11 @@
+--- gpsbabel-gpsbabel_1_5_4/shape.cc~	2018-12-12 10:42:31.597454151 +0100
++++ gpsbabel-gpsbabel_1_5_4/shape.cc	2018-12-12 10:44:35.680635553 +0100
+@@ -20,7 +20,7 @@
+ 
+  */
+ #include "defs.h"
+-#include <libshp/shapefil.h>
++#include <shapefil.h>
+ #include <stdlib.h>
+ 
+ #if SHAPELIB_ENABLED

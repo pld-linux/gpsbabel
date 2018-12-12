@@ -8,7 +8,7 @@ Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
 Version:	1.5.4
-Release:	1
+Release:	2
 License:	GPL v2+
 Group:		Applications/Engineering
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
@@ -25,6 +25,8 @@ Patch2:		gmapbase.patch
 Patch3:		%{name}-link.patch
 Patch4:		qt.patch
 Patch5:		privacy.patch
+Patch6:		%{name}-shapelib-shapefil-h-location.patch
+Patch7:		%{name}-system-minizip.patch
 URL:		http://www.gpsbabel.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
@@ -32,6 +34,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	expat-devel >= 1.95
 #BuildRequires:	libusb-compat-devel >= 0.1
 BuildRequires:	libxslt-progs
+BuildRequires:	minizip-devel
 BuildRequires:	rpmbuild(macros) >= 1.600
 BuildRequires:	shapelib-devel
 BuildRequires:	zlib-devel
@@ -78,6 +81,8 @@ Graficzny interfejs Qt do programu GPSBabel.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 # Use system shapelib instead of bundled partial shapelib
 mv shapelib{,.bundled}
@@ -87,6 +92,7 @@ mv shapelib{,.bundled}
 %{__autoconf}
 %configure \
 	--with-zlib=system \
+	--with-libminizip=system \
 	--with-doc=./manual
 %{__make}
 
