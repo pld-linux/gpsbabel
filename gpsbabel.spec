@@ -14,8 +14,8 @@
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
-Version:	1.5.4
-Release:	3
+Version:	1.6.0
+Release:	0.1
 License:	GPL v2+
 Group:		Applications/Engineering
 # Source0Download via POST form at https://www.gpsbabel.org/download.html#downloading
@@ -23,17 +23,15 @@ Group:		Applications/Engineering
 # token=$(curl -s http://www.gpsbabel.org/download.html | sed -rne 's/.*gpsbabel-'$version'\.tar\.gz.*token.*value="([^"]+)".*/\1/p' | head -n1)
 # curl -F "token=$token" -F "dl=gpsbabel-$version.tar.gz" http://www.gpsbabel.org/plan9.php -o gpsbabel-$version.tar.gz
 Source0:	https://github.com/gpsbabel/gpsbabel/archive/%{name}_%{fver}.tar.gz
-# Source0-md5:	0f2d422dbae82f939564cf8305a4654c
+# Source0-md5:	accb9f923ebe1b2d2a00c67d0e1dc430
 Source1:	%{name}.desktop
 Source2:	%{name}.png
 Patch0:		%{name}-auto.patch
 Patch1:		use-system-shapelib.patch
 Patch2:		gmapbase.patch
 Patch3:		%{name}-link.patch
-Patch4:		qt.patch
-Patch5:		privacy.patch
-Patch6:		%{name}-shapelib-shapefil-h-location.patch
-Patch7:		%{name}-system-minizip.patch
+Patch4:		privacy.patch
+Patch5:		%{name}-system-minizip.patch
 URL:		http://www.gpsbabel.org/
 BuildRequires:	autoconf >= 2.59
 BuildRequires:	automake
@@ -88,8 +86,6 @@ Graficzny interfejs Qt do programu GPSBabel.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
-%patch7 -p1
 
 # Use system shapelib instead of bundled partial shapelib
 mv shapelib{,.bundled}
@@ -122,7 +118,6 @@ install -d $RPM_BUILD_ROOT%{_bindir}
 %if %{with qt5}
 install -d $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_datadir}/%{name},%{translationdir}}
-install -p gui/objects/gpsbabelfe-bin $RPM_BUILD_ROOT%{_bindir}
 install -p gui/gpsbabel*_*.qm $RPM_BUILD_ROOT%{translationdir}
 cp -p gui/gmapbase.html $RPM_BUILD_ROOT%{_datadir}/%{name}
 
@@ -136,11 +131,6 @@ cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_iconsdir}/hicolor/256x256/apps
 #%find_lang %{name} --with-qt --all-name
 # TODO: patch find lang
 cat <<EOF > %{name}.lang
-%lang(de) %{translationdir}/gpsbabel_de.qm
-%lang(es) %{translationdir}/gpsbabel_es.qm
-%lang(fr) %{translationdir}/gpsbabel_fr.qm
-%lang(hu) %{translationdir}/gpsbabel_hu.qm
-%lang(it) %{translationdir}/gpsbabel_it.qm
 %lang(de) %{translationdir}/gpsbabelfe_de.qm
 %lang(es) %{translationdir}/gpsbabelfe_es.qm
 %lang(fr) %{translationdir}/gpsbabelfe_fr.qm
@@ -163,7 +153,6 @@ rm -rf $RPM_BUILD_ROOT
 %files gui -f %{name}.lang
 %defattr(644,root,root,755)
 %doc gui/{AUTHORS,README*,TODO}
-%attr(755,root,root) %{_bindir}/gpsbabelfe-bin
 %{_desktopdir}/gpsbabel.desktop
 %{_iconsdir}/hicolor/*/apps/gpsbabel.png
 %dir %{_datadir}/%{name}

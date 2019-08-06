@@ -1,11 +1,12 @@
---- gpsbabel-1.5.1/gui/map.cc.orig	2013-12-31 02:01:14.000000000 +0100
-+++ gpsbabel-1.5.1/gui/map.cc	2014-11-23 10:52:00.923720369 +0100
-@@ -60,7 +60,7 @@
-   connect(this,SIGNAL(loadFinished(bool)),
- 	  this,SLOT(loadFinishedX(bool)));
-   this->logTimeX("Start map constuctor");
+diff -ruNp gpsbabel-1.6.0.orig/gui/map.cc gpsbabel-1.6.0/gui/map.cc
+--- gpsbabel-1.6.0.orig/gui/map.cc	2019-05-02 10:26:47.000000000 +0200
++++ gpsbabel-1.6.0/gui/map.cc	2019-08-06 03:14:24.165967852 +0200
+@@ -90,7 +90,7 @@ Map::Map(QWidget* parent,
+   connect(mclicker, SIGNAL(logTime(QString)), this, SLOT(logTime(QString)));
+ #endif
+ 
 -  QString baseFile =  QApplication::applicationDirPath() + "/gmapbase.html";
 +  QString baseFile = "/usr/share/gpsbabel/gmapbase.html";
    if (!QFile(baseFile).exists()) {
-     QMessageBox::critical(0, appName,
- 			  tr("Missing \"gmapbase.html\" file.  Check installation"));
+     QMessageBox::critical(nullptr, appName,
+                           tr("Missing \"gmapbase.html\" file.  Check installation"));

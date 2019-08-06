@@ -1,31 +1,18 @@
-based on https://github.com/gpsbabel/gpsbabel/commit/8bf7ad22e5d4e6d3e365fd81a7f183978cdc2fe5
-
-diff --git a/Makefile.in b/Makefile.in
-index 5b792f46f..1edc25e7e 100644
---- a/Makefile.in
-+++ b/Makefile.in
-@@ -106,7 +114,7 @@ MINIZIP=zlib/contrib/minizip/zip.o \
- ZLIB=zlib/adler32.o zlib/compress.o zlib/crc32.o zlib/deflate.o zlib/inffast.o \
- 	zlib/inflate.o zlib/infback.o zlib/inftrees.o zlib/trees.o \
- 	zlib/uncompr.o zlib/gzlib.o zlib/gzclose.o zlib/gzread.o \
--	zlib/gzwrite.o zlib/zutil.o $(MINIZIP)
-+	zlib/gzwrite.o zlib/zutil.o
- 
- 
- LIBOBJS = queue.o route.o waypt.o filter_vecs.o util.o vecs.o mkshort.o \
-@@ -117,7 +125,7 @@ LIBOBJS = queue.o route.o waypt.o filter_vecs.o util.o vecs.o mkshort.o \
+diff -ruNp gpsbabel-1.6.0.orig/Makefile.in gpsbabel-1.6.0/Makefile.in
+--- gpsbabel-1.6.0.orig/Makefile.in	2019-05-02 10:26:47.000000000 +0200
++++ gpsbabel-1.6.0/Makefile.in	2019-08-06 03:31:17.476367571 +0200
+@@ -121,7 +121,7 @@ LIBOBJS = route.o waypt.o filter_vecs.o
+     src/core/textstream.o \
+ 	  src/core/usasciicodec.o \
  	  src/core/xmlstreamwriter.o \
- 	  src/core/usasciicodec.o\
- 	  src/core/ziparchive.o \
 -	  $(GARMIN) $(JEEPS) $(FMTS) $(FILTERS) $(SHAPE) @ZLIB@
 +	  $(GARMIN) $(JEEPS) $(FMTS) $(FILTERS) $(SHAPE) @ZLIB@ @MINIZIP@
  OBJS = main.o globals.o $(LIBOBJS) @FILEINFO@
  
  DEPFILES = $(OBJS:.o=.d)
-diff --git a/config.h.in b/config.h.in
-index f669911cf..f553d8520 100644
---- a/config.h.in
-+++ b/config.h.in
+diff -ruNp gpsbabel-1.6.0.orig/config.h.in gpsbabel-1.6.0/config.h.in
+--- gpsbabel-1.6.0.orig/config.h.in	2019-05-02 10:26:47.000000000 +0200
++++ gpsbabel-1.6.0/config.h.in	2019-08-06 03:32:15.346105354 +0200
 @@ -21,6 +21,9 @@
  /* Define to 1 if you have the `m' library (-lm). */
  #undef HAVE_LIBM
@@ -36,7 +23,7 @@ index f669911cf..f553d8520 100644
  /* Defined if you have libusb */
  #undef HAVE_LIBUSB
  
-@@ -72,6 +75,9 @@
+@@ -66,6 +69,9 @@
  /* 1 to enable as many formats as possible */
  #undef MAXIMAL_ENABLED
  
@@ -46,21 +33,13 @@ index f669911cf..f553d8520 100644
  /* Define to the address where bug reports for this package should be sent. */
  #undef PACKAGE_BUGREPORT
  
-diff --git a/configure.ac b/configure.ac
-index bfa5f6609..0a49f627a 100644
---- a/configure.in
-+++ b/configure.in
-@@ -121,9 +121,29 @@ AS_CASE([$with_zlib], ["system"], [
- 	AC_MSG_RESULT(no)
- 	;;
-     *) 	ZLIB="\$(ZLIB)" 
-+	ZLIB_CPP="-I\$(srcdir)/zlib"
- 	AC_MSG_RESULT(using included version);;
-   esac
+diff -ruNp gpsbabel-1.6.0.orig/configure.ac gpsbabel-1.6.0/configure.ac
+--- gpsbabel-1.6.0.orig/configure.ac	2019-05-02 10:26:47.000000000 +0200
++++ gpsbabel-1.6.0/configure.ac	2019-08-06 03:34:20.233539240 +0200
+@@ -128,6 +128,22 @@ AS_CASE([$with_zlib], ["system"], [
+ AC_SUBST(ZLIB_CPP)
+ AC_SUBST(ZLIB)
  
-+AC_SUBST(ZLIB_CPP)
-+AC_SUBST(ZLIB)
-+
 +AC_MSG_CHECKING([whether to support zlib's minizip])
 +AC_ARG_WITH([libminizip],
 +	[AS_HELP_STRING(
@@ -76,70 +55,7 @@ index bfa5f6609..0a49f627a 100644
 +	AC_MSG_RESULT([using included version])
 +])
 +AC_SUBST(MINIZIP)
-+ 
- case "$target" in
-     *-*-mingw32*)
++
+ AS_CASE(["$target"], [*-*-mingw32*], [
  	FILEINFO=fileinfo.o
-@@ -265,7 +284,6 @@ AC_SUBST(USB_LIBS)
- AC_SUBST(USB_CFLAGS)
- AC_SUBST(OSJEEPS)
- AC_SUBST(GBSER)
--AC_SUBST(ZLIB)
- 
- dnl Linux HID support
- AS_CASE(["$target"], [*-linux-*], [
-@@ -336,7 +354,7 @@ AC_MSG_RESULT([$DOCDIR])
- 
- # AC_CHECK_HEADERS([fcntl.h inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h strings.h sys/ioctl.h sys/time.h termios.h unistd.h])
- # set up HAVE_STDARG_H for zlib.
--AC_CHECK_HEADERS([stdarg.h])
-+AC_CHECK_HEADERS([unistd.h stdarg.h])
- 
- # Checks for typedefs, structures, and compiler characteristics.
- # AC_C_CONST
-diff --git a/defs.h b/defs.h
-index ea2bc0ac5..98e025f16 100644
---- a/defs.h
-+++ b/defs.h
-@@ -28,7 +28,7 @@
- #if HAVE_LIBZ
- #include <zlib.h>
- #elif !ZLIB_INHIBITED
--#include "zlib/zlib.h"
-+#include "zlib.h"
- #endif
- #include "gbfile.h"
- #include "inifile.h"
-diff --git a/src/core/ziparchive.cc b/src/core/ziparchive.cc
-index d4b5dcacc..947444505 100644
---- a/src/core/ziparchive.cc
-+++ b/src/core/ziparchive.cc
-@@ -23,7 +23,11 @@
- 
- #include "defs.h"
- #include "src/core/logging.h"
-+#ifdef HAVE_LIBMINIZIP
-+#include <minizip/zip.h>
-+#else
- #include "zlib/contrib/minizip/zip.h"
-+#endif
- 
- #include <QtCore/QFile>
- #include <QtCore/QDebug>
-diff --git a/src/core/ziparchive.h b/src/core/ziparchive.h
-index 0c9f8f27b..e91da17e2 100644
---- a/src/core/ziparchive.h
-+++ b/src/core/ziparchive.h
-@@ -21,7 +21,12 @@
- 
- #include <QtCore/QString>
- #include <QtCore/QStringList>
-+#include "defs.h"
-+#ifdef HAVE_LIBMINIZIP
-+#include <minizip/zip.h>
-+#else
- #include "zlib/contrib/minizip/zip.h"
-+#endif
- 
- class  ZipArchive
- {
+ 	AS_IF([test "$CC" = "gcc"], [

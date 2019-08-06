@@ -1,9 +1,10 @@
---- gpsbabel-1.5.4/Makefile.in.orig	2018-11-01 11:49:25.061806677 +0100
-+++ gpsbabel-1.5.4/Makefile.in	2018-11-01 11:51:00.111159677 +0100
-@@ -119,7 +119,7 @@
+diff -ruNp gpsbabel-1.6.0.orig/Makefile.in gpsbabel-1.6.0/Makefile.in
+--- gpsbabel-1.6.0.orig/Makefile.in	2019-05-02 10:26:47.000000000 +0200
++++ gpsbabel-1.6.0/Makefile.in	2019-08-06 03:16:08.729486021 +0200
+@@ -121,7 +121,7 @@ LIBOBJS = route.o waypt.o filter_vecs.o
+     src/core/textstream.o \
+ 	  src/core/usasciicodec.o \
  	  src/core/xmlstreamwriter.o \
- 	  src/core/usasciicodec.o\
- 	  src/core/ziparchive.o \
 -	  $(GARMIN) $(JEEPS) $(SHAPE) @ZLIB@ $(FMTS) $(FILTERS)
 +	  $(GARMIN) $(JEEPS) $(FMTS) $(FILTERS) $(SHAPE) @ZLIB@
  OBJS = main.o globals.o $(LIBOBJS) @FILEINFO@

@@ -1,48 +1,37 @@
-Use system shapelib - not suitable for upstream in this form.
-
---- gpsbabel-1.5.1/configure.in.orig	2014-11-23 10:08:03.673956695 +0100
-+++ gpsbabel-1.5.1/configure.in	2014-11-23 10:36:15.211127830 +0100
-@@ -340,7 +340,7 @@
- AC_SUBST(QT_SYSINC_OPT)
- AC_SUBST(QT_LIBS)
- 
--AC_CONFIG_FILES([Makefile gbversion.h gui/setup.iss xmldoc/makedoc tools/mkcapabilities win32/gpsbabel.rc jeeps/Makefile shapelib/Makefile zlib/empty])
-+AC_CONFIG_FILES([Makefile gbversion.h gui/setup.iss xmldoc/makedoc tools/mkcapabilities win32/gpsbabel.rc jeeps/Makefile zlib/empty])
- AC_CONFIG_FILES([gui/makelinuxdist.sh], [chmod +x gui/makelinuxdist.sh])
- AC_OUTPUT
- 
---- gpsbabel-1.5.4/Makefile.in.orig	2018-11-01 11:23:12.597708780 +0100
-+++ gpsbabel-1.5.4/Makefile.in	2018-11-01 11:26:35.878954083 +0100
-@@ -100,7 +100,7 @@
+diff -ruNp gpsbabel-1.6.0.orig/Makefile.in gpsbabel-1.6.0/Makefile.in
+--- gpsbabel-1.6.0.orig/Makefile.in	2019-05-02 10:26:47.000000000 +0200
++++ gpsbabel-1.6.0/Makefile.in	2019-08-06 03:12:10.122585490 +0200
+@@ -105,7 +105,7 @@ JEEPS=jeeps/gpsapp.o jeeps/gpscom.o \
  # Extra modules in Jeeps that we don't use
  # 	jeeps/gpsfmt.o jeeps/gpsinput.o jeeps/gpsproj.o
  
 -SHAPE=shapelib/shpopen.o shapelib/dbfopen.o shapelib/safileio.o
 +SHAPE=-lshp
  
- MINIZIP=zlib/contrib/minizip/zip.o \
- 	zlib/contrib/minizip/ioapi.o
-@@ -894,11 +894,7 @@
- session.o: session.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
-   gbfile.h cet.h inifile.h session.h src/core/datetime.h
- shape.o: shape.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
--  gbfile.h cet.h inifile.h session.h src/core/datetime.h \
+ ZLIB=zlib/adler32.o zlib/compress.o zlib/crc32.o zlib/deflate.o zlib/inffast.o \
+ 	zlib/inflate.o zlib/infback.o zlib/inftrees.o zlib/trees.o \
+@@ -909,11 +909,7 @@ sbp.o: sbp.cc defs.h config.h zlib/zlib.
+ session.o: session.cc defs.h config.h zlib/zlib.h zlib/zconf.h cet.h \
+   inifile.h gbfile.h session.h src/core/datetime.h src/core/optional.h
+ shape.o: shape.cc defs.h config.h zlib/zlib.h zlib/zconf.h cet.h \
+-  inifile.h gbfile.h session.h src/core/datetime.h src/core/optional.h \
 -  shapelib/shapefil.h
 -shapelib/dbfopen.o: shapelib/dbfopen.c shapelib/shapefil.h
 -shapelib/safileio.o: shapelib/safileio.c shapelib/shapefil.h
 -shapelib/shpopen.o: shapelib/shpopen.c shapelib/shapefil.h
-+  gbfile.h cet.h inifile.h session.h src/core/datetime.h
- skyforce.o: skyforce.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
-   gbfile.h cet.h inifile.h session.h src/core/datetime.h
- skytraq.o: skytraq.cc defs.h config.h queue.h zlib/zlib.h zlib/zconf.h \
---- gpsbabel-1.5.4/shape.cc.orig	2018-11-01 11:23:12.597708780 +0100
-+++ gpsbabel-1.5.4/shape.cc	2018-11-01 11:29:59.950436006 +0100
-@@ -20,7 +20,7 @@
++  inifile.h gbfile.h session.h src/core/datetime.h src/core/optional.h
+ skyforce.o: skyforce.cc defs.h config.h zlib/zlib.h zlib/zconf.h cet.h \
+   inifile.h gbfile.h session.h src/core/datetime.h src/core/optional.h
+ skytraq.o: skytraq.cc defs.h config.h zlib/zlib.h zlib/zconf.h cet.h \
+diff -ruNp gpsbabel-1.6.0.orig/shape.cc gpsbabel-1.6.0/shape.cc
+--- gpsbabel-1.6.0.orig/shape.cc	2019-05-02 10:26:47.000000000 +0200
++++ gpsbabel-1.6.0/shape.cc	2019-08-06 03:12:55.459376594 +0200
+@@ -25,7 +25,7 @@
+ #include <QtCore/QVector>
  
-  */
  #include "defs.h"
 -#include "shapelib/shapefil.h"
-+#include <libshp/shapefil.h>
- #include <stdlib.h>
++#include <shapefil.h>
+ #include <cstdlib>
  
  #if SHAPELIB_ENABLED
