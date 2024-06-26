@@ -2,8 +2,9 @@
 Type=Application
 Name=GPSBabel
 Comment=Qt GUI interface for GPSBabel
+Comment[pl]=Graficzny interfejs Qt do GPSBabel
 GenericName=GPSBabel
 Icon=gpsbabel
-Exec=gpsbabelfe-bin
+Exec=gpsbabelfe
 Terminal=false
 Categories=Geography;Education;Utility;

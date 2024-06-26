@@ -1,12 +1,11 @@
-diff -ruNp gpsbabel-1.6.0.orig/gui/map.cc gpsbabel-1.6.0/gui/map.cc
---- gpsbabel-1.6.0.orig/gui/map.cc	2019-05-02 10:26:47.000000000 +0200
-+++ gpsbabel-1.6.0/gui/map.cc	2019-08-06 03:14:24.165967852 +0200
-@@ -90,7 +90,7 @@ Map::Map(QWidget* parent,
-   connect(mclicker, SIGNAL(logTime(QString)), this, SLOT(logTime(QString)));
- #endif
- 
+--- gpsbabel-gpsbabel_1_9_0/gui/map.cc.orig	2024-06-25 22:10:16.661252615 +0200
++++ gpsbabel-gpsbabel_1_9_0/gui/map.cc	2024-06-25 22:12:00.294024521 +0200
+@@ -92,7 +92,7 @@ Map::Map(QWidget* parent,
+   // 1. In the file system in the same directory as the executable.
+   // 2. In the Qt resource system.  This is useful if the resource was compiled
+   //    into the executable.
 -  QString baseFile =  QApplication::applicationDirPath() + "/gmapbase.html";
-+  QString baseFile = "/usr/share/gpsbabel/gmapbase.html";
-   if (!QFile(baseFile).exists()) {
-     QMessageBox::critical(nullptr, appName,
-                           tr("Missing \"gmapbase.html\" file.  Check installation"));
++  QString baseFile =  "/usr/share/gpsbabel/gmapbase.html";
+   QString fileName;
+   QUrl baseUrl;
+   if (QFile(baseFile).exists()) {

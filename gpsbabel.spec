@@ -1,20 +1,23 @@
 #
 # Conditional build:
-%bcond_without	qt5		# build Qt5 GUI
+%bcond_without	doc		# HTML documentation
+%bcond_with	qt5		# Qt5 instead of Qt6
+%bcond_without	qtwebengine	# map preview using Qt WebEngine
 #
-%define		qtver		5.11.1
-%define         fver    %(echo %{version} | tr . _)
+%define		qt5_ver	5.12
+%define		qt6_ver	6.0
+%define         fver	%(echo %{version} | tr . _)
 
 # disable qt5 on x32 until qt5-qtwebengine builds
 # (python segfaults as of 20181212)
 %ifarch x32
-%undefine with_qt5
+%undefine with_qtwebengine
 %endif
 
 Summary:	GPSBabel - convert GPS waypoint, route and track data
 Summary(pl.UTF-8):	GPSBabel - konwertowanie danych GPS: waypointów, tras i śladów
 Name:		gpsbabel
-Version:	1.6.0
+Version:	1.9.0
 Release:	1
 License:	GPL v2+
 Group:		Applications/Engineering
@@ -22,41 +25,69 @@ Group:		Applications/Engineering
 # version=1.5.4
 # token=$(curl -s http://www.gpsbabel.org/download.html | sed -rne 's/.*gpsbabel-'$version'\.tar\.gz.*token.*value="([^"]+)".*/\1/p' | head -n1)
 # curl -F "token=$token" -F "dl=gpsbabel-$version.tar.gz" http://www.gpsbabel.org/plan9.php -o gpsbabel-$version.tar.gz
-Source0:	https://github.com/gpsbabel/gpsbabel/archive/%{name}_%{fver}.tar.gz
-# Source0-md5:	accb9f923ebe1b2d2a00c67d0e1dc430
+#Source0Download: https://github.com/GPSBabel/gpsbabel/tags
+Source0:	https://github.com/GPSBabel/gpsbabel/archive/%{name}_%{fver}.tar.gz
+# Source0-md5:	8555b7b4c89fbae832451ed0679e04f0
 Source1:	%{name}.desktop
 Source2:	%{name}.png
-Patch0:		%{name}-auto.patch
-Patch1:		use-system-shapelib.patch
 Patch2:		gmapbase.patch
-Patch3:		%{name}-link.patch
 Patch4:		privacy.patch
-Patch5:		%{name}-system-minizip.patch
 URL:		http://www.gpsbabel.org/
-BuildRequires:	autoconf >= 2.59
-BuildRequires:	automake
-BuildRequires:	docbook-style-xsl
-BuildRequires:	expat-devel >= 1.95
-#BuildRequires:	libusb-compat-devel >= 0.1
-BuildRequires:	libxslt-progs
-BuildRequires:	minizip-devel
-BuildRequires:	rpmbuild(macros) >= 1.600
-BuildRequires:	shapelib-devel
-BuildRequires:	zlib-devel
-BuildRequires:	Qt5Core-devel >= %{qtver}
-%if %{with qt5}
-BuildRequires:	Qt5Gui-devel >= %{qtver}
-BuildRequires:	Qt5Network-devel >= %{qtver}
-BuildRequires:	Qt5WebEngine-devel >= %{qtver}
-BuildRequires:	Qt5Xml-devel >= %{qtver}
+BuildRequires:	cmake >= 3.11
 BuildRequires:	desktop-file-utils
-BuildRequires:	qt5-build >= %{qtver}
-BuildRequires:	qt5-linguist >= %{qtver}
-BuildRequires:	qt5-qmake >= %{qtver}
+BuildRequires:	libstdc++-devel >= 6:7
+BuildRequires:	libusb-devel >= 1.0
+BuildRequires:	pkgconfig
+BuildRequires:	rpmbuild(macros) >= 1.605
+BuildRequires:	shapelib-devel
+BuildRequires:	zlib-devel >= 1.2.9
+%if %{with qt5}
+BuildRequires:	Qt5Core-devel >= %{qt5_ver}
+%else
+BuildRequires:	Qt6Core-devel >= %{qt6_ver}
+%endif
+%if %{with qt5}
+BuildRequires:	Qt5Gui-devel >= %{qt5_ver}
+BuildRequires:	Qt5Network-devel >= %{qt5_ver}
+BuildRequires:	Qt5SerialPort-devel >= %{qt5_ver}
+%if %{with qtwebengine}
+BuildRequires:	Qt5WebChannel-devel >= %{qt5_ver}
+BuildRequires:	Qt5WebEngine-devel >= %{qt5_ver}
+%endif
+BuildRequires:	Qt5Widgets-devel >= %{qt5_ver}
+BuildRequires:	Qt5Xml-devel >= %{qt5_ver}
+BuildRequires:	qt5-build >= %{qt5_ver}
+BuildRequires:	qt5-linguist >= %{qt5_ver}
+BuildRequires:	qt5-qmake >= %{qt5_ver}
+%else
+BuildRequires:	Qt6Gui-devel >= %{qt6_ver}
+BuildRequires:	Qt6Network-devel >= %{qt6_ver}
+BuildRequires:	Qt6Qt5Compat-devel >= %{qt6_ver}
+BuildRequires:	Qt6SerialPort-devel >= %{qt6_ver}
+%if %{with qtwebengine}
+BuildRequires:	Qt6WebChannel-devel >= %{qt6_ver}
+BuildRequires:	Qt6WebEngine-devel >= %{qt6_ver}
+%endif
+BuildRequires:	Qt6Widgets-devel >= %{qt6_ver}
+BuildRequires:	Qt6Xml-devel >= %{qt6_ver}
+BuildRequires:	qt6-build >= %{qt6_ver}
+BuildRequires:	qt6-linguist >= %{qt6_ver}
+%endif
+%if %{with doc}
+BuildRequires:	docbook-dtd50-xml
+BuildRequires:	docbook-style-xsl-ns
+BuildRequires:	libxslt-progs
+# xmllint + (optional) jing for validation
+BuildRequires:	jing
+BuildRequires:	libxml2-progs
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%if %{with qt5}
 %define		translationdir	%{_datadir}/qt5/translations
+%else
+%define		translationdir	%{_datadir}/qt6/translations
+%endif
 
 %description
 Converts GPS waypoint, route and track data from one format type to
@@ -80,46 +111,41 @@ Graficzny interfejs Qt do programu GPSBabel.
 
 %prep
 %setup -q -n %{name}-%{name}_%{fver}
-%patch0 -p1
-%patch1 -p1
 %patch2 -p1
-%patch3 -p1
 %patch4 -p1
-%patch5 -p1
-
-# Use system shapelib instead of bundled partial shapelib
-mv shapelib{,.bundled}
-
-%build
-%{__aclocal}
-%{__autoconf}
-%configure \
-	--with-zlib=system \
-	--with-libminizip=system \
-	--with-doc=./manual
-%{__make}
-
-%{__perl} xmldoc/makedoc
-%{__make} gpsbabel.html
 
 %if %{with qt5}
-cd gui
-qmake-qt5
-lrelease-qt5 *.ts
+%{__sed} -i -e '/QT NAMES / s/Qt6 //' gui/CMakeLists.txt
+%endif
+
+%build
+install -d build
+cd build
+%cmake .. \
+	%{!?with_qtwebengine:-DGPSBABEL_MAPPREVIEW=OFF} \
+	-DGPSBABEL_WITH_SHAPELIB=pkgconfig \
+	-DGPSBABEL_WITH_ZLIB=findpackage
+
 %{__make}
+
+%{__make} package_app
+cd ..
+
+%if %{with doc}
+# docs generation requires in-source build
+%cmake .
+
+%{__make} gpsbabel.html
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_bindir}
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
-
-%if %{with qt5}
-install -d $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_datadir}/%{name},%{translationdir}}
-install -p gui/gpsbabel*_*.qm $RPM_BUILD_ROOT%{translationdir}
-cp -p gui/gmapbase.html $RPM_BUILD_ROOT%{_datadir}/%{name}
+
+install build/gui/GPSBabelFE/gpsbabel $RPM_BUILD_ROOT%{_bindir}
+install build/gui/GPSBabelFE/gpsbabelfe $RPM_BUILD_ROOT%{_bindir}
+cp -p build/gui/GPSBabelFE/gmapbase.html $RPM_BUILD_ROOT%{_datadir}/%{name}
+cp -p build/gui/GPSBabelFE/translations/gpsbabel*.qm $RPM_BUILD_ROOT%{translationdir}
 
 desktop-file-install \
 	--dir $RPM_BUILD_ROOT%{_desktopdir} \
@@ -128,33 +154,31 @@ desktop-file-install \
 install -d $RPM_BUILD_ROOT%{_iconsdir}/hicolor/256x256/apps
 cp -p %{SOURCE2} $RPM_BUILD_ROOT%{_iconsdir}/hicolor/256x256/apps
 
-#%find_lang %{name} --with-qt --all-name
-# TODO: patch find lang
-cat <<EOF > %{name}.lang
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(644,root,root,755)
+%doc AUTHORS NEWS README.igc README.md SECURITY.md %{?with_doc:gpsbabel.html}
+%attr(755,root,root) %{_bindir}/gpsbabel
+%lang(de) %{translationdir}/gpsbabel_de.qm
+%lang(es) %{translationdir}/gpsbabel_es.qm
+%lang(fr) %{translationdir}/gpsbabel_fr.qm
+%lang(hu) %{translationdir}/gpsbabel_hu.qm
+%lang(it) %{translationdir}/gpsbabel_it.qm
+%lang(ru) %{translationdir}/gpsbabel_ru.qm
+
+%files gui
+%defattr(644,root,root,755)
+%doc gui/{README.gui,TODO}
+%attr(755,root,root) %{_bindir}/gpsbabelfe
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/gmapbase.html
 %lang(de) %{translationdir}/gpsbabelfe_de.qm
 %lang(es) %{translationdir}/gpsbabelfe_es.qm
 %lang(fr) %{translationdir}/gpsbabelfe_fr.qm
 %lang(hu) %{translationdir}/gpsbabelfe_hu.qm
 %lang(it) %{translationdir}/gpsbabelfe_it.qm
 %lang(ru) %{translationdir}/gpsbabelfe_ru.qm
-EOF
-
-%endif
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-%files
-%defattr(644,root,root,755)
-%doc AUTHORS README* gpsbabel.html
-%attr(755,root,root) %{_bindir}/gpsbabel
-
-%if %{with qt5}
-%files gui -f %{name}.lang
-%defattr(644,root,root,755)
-%doc gui/{AUTHORS,README*,TODO}
 %{_desktopdir}/gpsbabel.desktop
 %{_iconsdir}/hicolor/*/apps/gpsbabel.png
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/gmapbase.html
-%endif
