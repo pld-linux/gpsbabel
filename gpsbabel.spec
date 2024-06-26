@@ -35,6 +35,7 @@ Source0:	https://github.com/GPSBabel/gpsbabel/archive/%{name}_%{fver}.tar.gz
 # Source0-md5:	8555b7b4c89fbae832451ed0679e04f0
 Source1:	%{name}.desktop
 Source2:	%{name}.png
+Patch0:		%{name}-no-jing.patch
 Patch2:		gmapbase.patch
 Patch4:		privacy.patch
 URL:		http://www.gpsbabel.org/
@@ -82,8 +83,7 @@ BuildRequires:	qt6-linguist >= %{qt6_ver}
 BuildRequires:	docbook-dtd50-xml
 BuildRequires:	docbook-style-xsl-ns
 BuildRequires:	libxslt-progs
-# xmllint + (optional) jing for validation
-BuildRequires:	jing
+# xmllint for validation
 BuildRequires:	libxml2-progs
 %endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -116,6 +116,7 @@ Graficzny interfejs Qt do programu GPSBabel.
 
 %prep
 %setup -q -n %{name}-%{name}_%{fver}
+%patch0 -p1
 %patch2 -p1
 %patch4 -p1
 

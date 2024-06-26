@@ -1,0 +1,11 @@
+--- gpsbabel-gpsbabel_1_9_0/tools/make_gpsbabel_doc.sh.orig	2023-09-30 18:51:46.000000000 +0200
++++ gpsbabel-gpsbabel_1_9_0/tools/make_gpsbabel_doc.sh	2024-06-26 22:21:51.926083734 +0200
+@@ -6,7 +6,7 @@ xmllint --noout --relaxng http://docbook
+ # the following doesn't seem to work.
+ #xmllint --noout --schematron http://docbook.org/xml/5.0/sch/docbook.sch xmldoc/readme.xml
+ # jing and many depedencies removed from fedora
+-if command -v jing >/dev/null 2>&1; then
++if false; then
+   jing http://docs.oasis-open.org/docbook/xml/5.0/rng/docbook.rng xmldoc/readme.xml
+   # can seed a failure by removing version="5.0" from xmldoc/readme.xml
+   jing http://docs.oasis-open.org/docbook/xml/5.0/sch/docbook.sch xmldoc/readme.xml
