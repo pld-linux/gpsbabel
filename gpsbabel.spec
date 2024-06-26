@@ -1,17 +1,22 @@
 #
 # Conditional build:
 %bcond_without	doc		# HTML documentation
-%bcond_with	qt5		# Qt5 instead of Qt6
+%bcond_without	qt5		# Qt5 instead of Qt6
 %bcond_without	qtwebengine	# map preview using Qt WebEngine
 #
 %define		qt5_ver	5.12
 %define		qt6_ver	6.0
 %define         fver	%(echo %{version} | tr . _)
 
-# disable qt5 on x32 until qt5-qtwebengine builds
-# (python segfaults as of 20181212)
-%ifarch x32
+# Qt WebEngine has limited availability
+%if %{with qt5}
+%ifnarch %{ix86} %{x8664} %{arm} aarch64
 %undefine with_qtwebengine
+%endif
+%else
+%ifnarch %{x8664} aarch64
+%undefine with_qtwebengine
+%endif
 %endif
 
 Summary:	GPSBabel - convert GPS waypoint, route and track data
@@ -133,7 +138,8 @@ cd ..
 
 %if %{with doc}
 # docs generation requires in-source build
-%cmake .
+%cmake . \
+	%{!?with_qtwebengine:-DGPSBABEL_MAPPREVIEW=OFF}
 
 %{__make} gpsbabel.html
 %endif
