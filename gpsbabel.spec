@@ -116,9 +116,9 @@ Graficzny interfejs Qt do programu GPSBabel.
 
 %prep
 %setup -q -n %{name}-%{name}_%{fver}
-%patch0 -p1
-%patch2 -p1
-%patch4 -p1
+%patch -P0 -p1
+%patch -P2 -p1
+%patch -P4 -p1
 
 %if %{with qt5}
 %{__sed} -i -e '/QT NAMES / s/Qt6 //' gui/CMakeLists.txt
